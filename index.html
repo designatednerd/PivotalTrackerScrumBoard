@@ -169,6 +169,23 @@ transition: all 0.3s;
             document.getElementById("token").value = token;
             document.getElementById("project_id").value = projectId;
         }
+        if(token.length > 0) {
+            return;
+        }
+        
+        var url = 'https://www.pivotaltracker.com/services/v5';
+    	url += '/projects/' + projectId;
+	    url += '/iterations?scope=current';
+    	$.ajax({
+            url: url,
+            beforeSend: function(xhr) {
+               xhr.setRequestHeader('X-TrackerToken', token);
+	        },
+	        dataType: 'json',
+	        success: function(data){
+	  	        updateTable(data[0]);
+            }
+    	});
     }
       
     function makeColumn(container, data, header) {
