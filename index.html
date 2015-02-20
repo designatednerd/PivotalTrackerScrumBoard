@@ -33,8 +33,8 @@
 
 	function executeTrackerApiFetch() {
 	// get parameters
-	var token = '86dae2be436c084459c8fa0f75a5da57';//$('#token').val(); //
-	var projectId = '1123604';//$('#project_id').val(); //
+	var token = $('#token').val();
+	var projectId = $('#project_id').val();
 	
 	// PENDING URL
 	var url = 'https://www.pivotaltracker.com/services/v5';
@@ -103,7 +103,7 @@
     }
 
     var outputTable = makeTable($('#result_area'), data);
-      }
+    }
 
 
       $(function() {
