@@ -143,11 +143,9 @@ position: relative;
 transition: all 0.3s;
 }
 
-
 #doit_link:hover {
 background: #fff;
 color: #006969;
-
 -webkit-transition: all 0.3s;
 -moz-transition: all 0.3s;
 transition: all 0.3s;
@@ -156,6 +154,7 @@ transition: all 0.3s;
 </head>
 
 <body onload="loadData()">
+
     <form id='entryForm'>
         <p><label for='token'>User API Token:</label> <input id='token' type='text'></p>
         <p><label for='project_id'>Pivotal Tracker Project ID:</label> <input id='project_id' type='text'></p>
@@ -199,7 +198,6 @@ transition: all 0.3s;
 	var url = 'https://www.pivotaltracker.com/services/v5';
 	url += '/projects/' + projectId;
 	url += '/iterations?scope=current';
-//	alert(url)
 	$.ajax({
 	  url: url,
 	  beforeSend: function(xhr) {
@@ -216,7 +214,9 @@ transition: all 0.3s;
 	function htmlFromStory(story) { //$('<table border="5"/>')
 	    var name = story.name;
         var trimmedTitle = name.substring(0, Math.min(length, name.length));
-        trimmedTitle = trimmedTitle + "...";
+        if (name.length > length) {
+            trimmedTitle = trimmedTitle + "...";
+        }
         var name = '<p>' + trimmedTitle + '</p>';
         var link = $('<a href="' + story.url + '">' + name + '</a>');
         return link;
