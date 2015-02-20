@@ -7,7 +7,7 @@
     'text/javascript'></script>
 </head>
 
-<body>
+<body onload="loadData()">
     <form>
         <p><label for='token'>User API Token:</label> <input id='token' type=
         'text'></p>
@@ -16,10 +16,19 @@
         Project:</label> <input id='project_id' type='text'></p>
     </form><a href='#' id='doit_link'>Make The Board</a>
 
-    <div id='result_area' style='margin:40px'></div><script type=
-    "text/javascript">
+    <div id='result_area' style='margin:40px'></div><script type="text/javascript">
       
-      function makeTable(container, data) {
+    function loadData(container, data) {
+        if(typeof(Storage) !== "undefined") {
+            //load local storage if it exists
+            var token = localStorage.getItem("token");
+			var projectId = localStorage.getItem("project_id");
+            document.getElementById("token").value = token;
+            document.getElementById("project_id").value = projectId;
+        }
+    }
+      
+    function makeTable(container, data) {
         var table = $('<table border="5"/>').addClass('CSSTableGenerator');
         $.each(data, function(rowIndex, r) {
             var row = $("<tr/>");
@@ -33,14 +42,18 @@
 
 	function executeTrackerApiFetch() {
 	// get parameters
-	var token = $('#token').val();
+    var token = $('#token').val();
 	var projectId = $('#project_id').val();
 	
-	// PENDING URL
+	if(typeof(Storage) !== "undefined") {
+        //save local storage if it exists
+        localStorage.setItem("token", token);
+        localStorage.setItem("project_id", projectId);
+    }
+	
 	var url = 'https://www.pivotaltracker.com/services/v5';
 	url += '/projects/' + projectId;
 	url += '/iterations?scope=current';
-	alert(url)
 	$.ajax({
 	  url: url,
 	  beforeSend: function(xhr) {
