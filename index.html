@@ -5,8 +5,108 @@
     <script src=
     'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js' type=
     'text/javascript'></script>
-    <style>
-
+<style>
+*{
+    margin:0;
+    padding:0;
+}
+body{
+  font-family:'Source Sans Pro',sans-serif;
+  font-size:100%;
+  margin:3em;
+  background:#006969;
+  color:#fff;
+}
+ 
+.columnwrapper {
+    width: 250px;
+    float:left;
+}
+ 
+.columnheader { 
+    width: 250px;
+    text-align: center;
+}
+h2,p{
+    font-size:100%;
+    font-weight:normal;
+}
+ul,li{
+    list-style:none;
+}
+ul{
+  overflow:hidden;
+  padding:3em;
+}
+ul li a{
+  text-decoration:none;
+  color:#000;
+  background:#ffc;
+  display:block;
+  height:5em;
+  width:5em;
+  padding:1em;
+  -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
+  -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+  box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+  -moz-transition:-moz-transform .15s linear;
+  -o-transition:-o-transform .15s linear;
+  -webkit-transition:-webkit-transform .15s linear;
+}
+ul li{
+  margin:1em;
+  float:left;
+}
+ul li h2{
+  font-size:1 em;
+  font-weight:bold;
+  padding-bottom:10px;
+}
+ul li p{
+  font-family:"Reenie Beanie",arial,sans-serif;
+  font-size:1.2em;
+}
+ul li a{
+  -webkit-transform: rotate(-6deg);
+  -o-transform: rotate(-6deg);
+  -moz-transform:rotate(-6deg);
+}
+ul li:nth-child(even) a{
+  -o-transform:rotate(4deg);
+  -webkit-transform:rotate(4deg);
+  -moz-transform:rotate(4deg);
+  position:relative;
+  top:5px;
+  background:#cfc;
+}
+ul li:nth-child(3n) a{
+  -o-transform:rotate(-3deg);
+  -webkit-transform:rotate(-3deg);
+  -moz-transform:rotate(-3deg);
+  position:relative;
+  top:-5px;
+  background:#ccf;
+}
+ul li:nth-child(5n) a{
+  -o-transform:rotate(5deg);
+  -webkit-transform:rotate(5deg);
+  -moz-transform:rotate(5deg);
+  position:relative;
+  top:-10px;
+}
+ul li a:hover,ul li a:focus{
+  /*box-shadow:10px 10px 7px rgba(0,0,0,.7);
+  -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
+  -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);*/
+  -webkit-transform: scale(1.5);
+  -moz-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  position:relative;
+  z-index:5;
+}
+ol{text-align:center;}
+ol li{display:inline;padding-right:1em;}
+ol li a{color:#fff;}
 </style>
 </head>
 
@@ -31,20 +131,20 @@
         }
     }
       
-    function makeTable(container, data) {
-        var table = $('<table border="5"/>').addClass('CSSTableGenerator');
+    function makeColumn(container, data, header) {
+        var group = $('<div/>').addClass('columnwrapper');
+        group.append($('<div/>').addClass('columnheader').text(header));
+        var column = $('<ul/>');
         $.each(data, function(rowIndex, r) {
-            var row = $("<tr/>");
-            $.each(r, function(colIndex, c) {
-                row.append($('<t'+(rowIndex == 0 ?  'h' : 'd bgColor="yellow"')+'/>').text(c));
-            });
-            table.append(row);
+            var row = $("<li/>");
+            row.append(r);
+            column.append(row);
         });
-    return container.append(table);
+        group.append(column);
+    return container.append(group);
     }
 
 	function executeTrackerApiFetch() {
-	// get parameters
     var token = $('#token').val();
 	var projectId = $('#project_id').val();
 	
@@ -58,7 +158,7 @@
 	var url = 'https://www.pivotaltracker.com/services/v5';
 	url += '/projects/' + projectId;
 	url += '/iterations?scope=current';
-	alert(url)
+//	alert(url)
 	$.ajax({
 	  url: url,
 	  beforeSend: function(xhr) {
@@ -70,13 +170,14 @@
 	  }
 	});
 	}
-	
-	function getUsers() {
-	    
-	}
-	
-	function htmlFromStory(story) {
-	    
+
+	var length = 45; //arbitrary length for story title
+	function htmlFromStory(story) { //$('<table border="5"/>')
+	    var name = story.name;
+        var trimmedTitle = name.substring(0, Math.min(length, name.length));
+        var name = '<p>' + trimmedTitle + '</p>';
+        var link = $('<a href="' + story.url + '">' + name + '</a>');
+        return link;
 	}
 
 	function updateTable(results) {
@@ -94,21 +195,21 @@
 	        continue;
 	    }
 	    switch(story.current_state) {
-            case 'accepted': acceptedArray.push(story.name);
+            case 'accepted': acceptedArray.push(htmlFromStory(story));
                 break;
-            case 'delivered': deliveredArray.push(story.name);
+            case 'delivered': deliveredArray.push(htmlFromStory(story));
                 break;
-            case 'finished': finishedArray.push(story.name);
+            case 'finished': finishedArray.push(htmlFromStory(story));
                 break;
-            case 'started': progressArray.push(story.name);
+            case 'started': progressArray.push(htmlFromStory(story));
                 break;
-            case 'rejected': pendingArray.push(story.name);
+            case 'rejected': pendingArray.push(htmlFromStory(story));
                 break;
-            case 'planned': pendingArray.push(story.name);
+            case 'planned': pendingArray.push(htmlFromStory(story));
                 break;   
-            case 'unstarted': pendingArray.push(story.name);
+            case 'unstarted': pendingArray.push(htmlFromStory(story));
                 break;   
-            case 'unscheduled': pendingArray.push(story.name);
+            case 'unscheduled': pendingArray.push(htmlFromStory(story));
                 break;                                                                                                                        
 		}
     }
@@ -116,19 +217,12 @@
     var max = Math.max(pendingArray.length, progressArray.length, finishedArray.length, deliveredArray.length, acceptedArray.length);
 
     var titleArray = ["Pending", "In Progress", "Code Review", "Delivered", "Accepted"];
-    var data = [titleArray];
+    makeColumn($('#result_area'), pendingArray, "Pending");
+    makeColumn($('#result_area'), progressArray, "In Progress");
+    makeColumn($('#result_area'), finishedArray, "Code Review");
+    makeColumn($('#result_area'), deliveredArray, "Delivered");
+    makeColumn($('#result_area'), acceptedArray, "Accepted");    
 
-    for (var i = 0; i < max; i++) { 
-    var row = []
-	    row.push(pendingArray[i] || "");
-	    row.push(progressArray[i] || "");
-	    row.push(finishedArray[i] || "");
-	    row.push(deliveredArray[i] || "");
-	    row.push(acceptedArray[i] || "");
-		data.push(row);
-    }
-
-    var outputTable = makeTable($('#result_area'), data);
     }
 
 
