@@ -76,8 +76,9 @@ ul li h2{
   padding-bottom:10px;
 }
 ul li p{
-  font-family:"Dekko",arial,sans-serif;
-  font-size:1em;
+    font-family: "Dekko",arial,sans-serif;
+    font-size: 0.8em;
+    line-height: 1.3em;    
 }
 ul li a{
   -webkit-transform: rotate(-1deg);
@@ -184,10 +185,11 @@ ol li a{color:#fff;}
 	});
 	}
 
-	var length = 45; //arbitrary length for story title
+	var length = 75; //arbitrary length for story title
 	function htmlFromStory(story) { //$('<table border="5"/>')
 	    var name = story.name;
         var trimmedTitle = name.substring(0, Math.min(length, name.length));
+        trimmedTitle = trimmedTitle + "...";
         var name = '<p>' + trimmedTitle + '</p>';
         var link = $('<a href="' + story.url + '">' + name + '</a>');
         return link;
