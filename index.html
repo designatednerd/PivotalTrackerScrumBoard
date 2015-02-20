@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access the Pivotal Tracker API via CORS</title>
+    <script src=
+    'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js' type=
+    'text/javascript'></script>
+</head>
+
+<body>
+    <form>
+        <p><label for='token'>User API Token:</label> <input id='token' type=
+        'text'></p>
+
+        <p><label for='project_id'>ID Number of Pivotal Tracker
+        Project:</label> <input id='project_id' type='text'></p>
+    </form><a href='#' id='doit_link'>Make The Board</a>
+
+    <div id='result_area' style='margin:40px'></div><script type=
+    "text/javascript">
+      
+      function makeTable(container, data) {
+        var table = $('<table border="5"/>').addClass('CSSTableGenerator');
+        $.each(data, function(rowIndex, r) {
+            var row = $("<tr/>");
+            $.each(r, function(colIndex, c) {
+                row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+            });
+            table.append(row);
+        });
+    return container.append(table);
+    }
+
+	function executeTrackerApiFetch() {
+	// get parameters
+	var token = '86dae2be436c084459c8fa0f75a5da57';//$('#token').val(); //
+	var projectId = '1123604';//$('#project_id').val(); //
+	
+	// PENDING URL
+	var url = 'https://www.pivotaltracker.com/services/v5';
+	url += '/projects/' + projectId;
+	url += '/iterations?scope=current';
+	alert(url)
+	$.ajax({
+	  url: url,
+	  beforeSend: function(xhr) {
+	    xhr.setRequestHeader('X-TrackerToken', token);
+	  },
+	  dataType: 'json',
+	  success: function(data){
+	  	updateTable(data[0]);
+	  }
+	});
+	}
+      
+	var pendingArray = new Array();
+	var progressArray = new Array();
+	var finishedArray = new Array();
+	var deliveredArray = new Array();
+	var acceptedArray = new Array();      
+	
+	function updateTable(results) {
+	var stories = results.stories;
+    //accepted, delivered, finished, started, rejected, planned, unstarted, unscheduled
+    for (var i = 0; i < stories.length; i++) {
+    story = stories[i];
+	    if (story.story_type == 'release') {
+	        continue;
+	    }
+	    switch(story.current_state) {
+            case 'accepted': acceptedArray.push(story.name);
+                break;
+            case 'delivered': deliveredArray.push(story.name);
+                break;
+            case 'finished': finishedArray.push(story.name);
+                break;
+            case 'started': progressArray.push(story.name);
+                break;
+            case 'rejected': pendingArray.push(story.name);
+                break;
+            case 'planned': pendingArray.push(story.name);
+                break;   
+            case 'unstarted': pendingArray.push(story.name);
+                break;   
+            case 'unscheduled': pendingArray.push(story.name);
+                break;                                                                                                                        
+		}
+    }
+
+    var max = Math.max(pendingArray.length, progressArray.length, finishedArray.length, deliveredArray.length, acceptedArray.length);
+
+    var titleArray = ["Pending", "In Progress", "Finished", "Delivered", "Accepted"];
+    var data = [titleArray];
+
+    for (var i = 0; i < max; i++) { 
+    var row = []
+	    row.push(pendingArray[i] || "");
+	    row.push(progressArray[i] || "");
+	    row.push(finishedArray[i] || "");
+	    row.push(deliveredArray[i] || "");
+	    row.push(acceptedArray[i] || "");
+		data.push(row);
+    }
+
+    var outputTable = makeTable($('#result_area'), data);
+      }
+
+
+      $(function() {
+        $('#doit_link').click(executeTrackerApiFetch);
+      });
+    </script>
+</body>
+</html>
