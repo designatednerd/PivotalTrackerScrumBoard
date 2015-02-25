@@ -124,7 +124,7 @@ ol li a{color:#fff;}
 
 #doit_link{
 text-decoration: none;
- border: 3px solid #fff;
+border: 3px solid #fff;
 font-family: inherit;
 font-size: inherit;
 color: inherit;
@@ -150,11 +150,20 @@ color: #006969;
 -moz-transition: all 0.3s;
 transition: all 0.3s;
 }
+
+#regular_link {
+color: darkgray;
+text-decoration: none;
+}
+
+#regular_link:hover {
+color: white;
+}
 </style>
 </head>
 
 <body onload="loadData()">
-
+This simple scrum board was made by <a href="http://www.vokal.io/team/sean-wolter" id='regular_link'>Sean Wolter</a> at <a href="http://vokal.io" id='regular_link'>Vokal</a>'s February 2015 Hack Days. Github is <a href="https://github.com/seanwolter/PivotalTrackerScrumBoard" id='regular_link'>here</a>!<br><br>
     <form id='entryForm'>
         <p><label for='token'>User API Token:</label> <input id='token' type='text'></p>
         <p><label for='project_id'>Pivotal Tracker Project ID:</label> <input id='project_id' type='text'></p>
