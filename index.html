@@ -52,9 +52,9 @@ ul{
   padding:2em;
 }
 ul li a{
+  overflow: hidden;
   text-decoration:none;
   color:#000;
-  background:#ffc;
   display:block;
   height:5em;
   width:5em;
@@ -91,7 +91,6 @@ ul li:nth-child(even) a{
   -moz-transform:rotate(1deg);
   position:relative;
   top:5px;
-  background:#cfc;
 }
 ul li:nth-child(3n) a{
   -o-transform:rotate(-1deg);
@@ -99,7 +98,6 @@ ul li:nth-child(3n) a{
   -moz-transform:rotate(-1deg);
   position:relative;
   top:-5px;
-  background:#ccf;
 }
 ul li:nth-child(5n) a{
   -o-transform:rotate(1deg);
@@ -109,9 +107,6 @@ ul li:nth-child(5n) a{
   top:-10px;
 }
 ul li a:hover,ul li a:focus{
-  /*box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);*/
   -webkit-transform: scale(1.5);
   -moz-transform: scale(1.5);
   -o-transform: scale(1.5);
@@ -219,15 +214,27 @@ This simple scrum board was made by <a href="http://www.vokal.io/team/sean-wolte
 	});
 	}
 
-	var length = 75; //arbitrary length for story title
-	function htmlFromStory(story) { //$('<table border="5"/>')
+    var colorDictionaryForUsers = [];
+	var length = 70; //arbitrary length for story title
+	function htmlFromStory(story) {
 	    var name = story.name;
         var trimmedTitle = name.substring(0, Math.min(length, name.length));
         if (name.length > length) {
             trimmedTitle = trimmedTitle + "...";
         }
         var name = '<p>' + trimmedTitle + '</p>';
-        var link = $('<a href="' + story.url + '">' + name + '</a>');
+        
+        var ownerID = story.owned_by_id;
+        var colorForOwner = colorDictionaryForUsers[ownerID];
+        if (!colorForOwner) {
+            // stole random color from http://www.paulirish.com/2009/random-hex-color-code-snippets/
+            var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+            colorDictionaryForUsers[ownerID] = randomColor;
+            colorForOwner = randomColor;
+        }
+        
+        var longAssString = '<a href="' + story.url + '"" style="background:' + colorForOwner + '">' + name + '</a>';
+        var link = $(longAssString);
         return link;
 	}
 
@@ -264,8 +271,6 @@ This simple scrum board was made by <a href="http://www.vokal.io/team/sean-wolte
                 break;                                                                                                                        
 		}
     }
-
-    var max = Math.max(pendingArray.length, progressArray.length, finishedArray.length, deliveredArray.length, acceptedArray.length);
 
     var titleArray = ["Pending", "In Progress", "Code Review", "Delivered", "Accepted"];
     makeColumn($('#result_area'), pendingArray, "Pending");
